@@ -1,13 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import FirstScreen from './screens/FirstScreen';
+import colors from '../assets/files/Colors';
 
-export default function App() {
+export default function FirstScreen() {
   return (
     <View style={styles.container}>
-      <FirstScreen />
-      <StatusBar style="auto" />
+      <Text>Open up App.tsx to start working on your app!</Text>
     </View>
   );
 }
