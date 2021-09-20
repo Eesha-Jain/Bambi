@@ -5,13 +5,32 @@ const win = Dimensions.get('window');
 import colors from '../assets/files/Colors';
 import MapView from 'react-native-maps';
 import data from '../tempmapdata.ts';
+import * as Location from 'expo-location';
 
 export default function Map({navigation: {navigate}}) {
-  const [reports, setReports] = useState([]);
+  let [reports, setReports] = useState([]);
+  let [position, setPosition] = useState({
+    "coords": {
+      "accuracy": 65,
+      "altitude": 131.98288917541504,
+      "altitudeAccuracy": 10,
+      "heading": -1,
+      "latitude": 47.62433193633936,
+      "longitude": -122.12524060705351,
+      "speed": -1,
+    },
+    "timestamp": 1632112627679.3599,
+  });
 
   useEffect(() => {
     setReports(data.reports);
+    findCoordinates();
   }, []);
+
+  function findCoordinates() {
+    Location.installWebGeolocationPolyfill();
+    navigator.geolocation.getCurrentPosition(setPosition);
+	};
 
   return (
     <View style={styles.container}>
@@ -20,10 +39,10 @@ export default function Map({navigation: {navigate}}) {
         <MapView
           style={styles.map}
           initialRegion={{
-            latitude: 37.1,
-            longitude: -95.7,
-            latitudeDelta: 10,
-            longitudeDelta: 45
+            latitude: position["coords"]["latitude"],
+            longitude: position["coords"]["longitude"],
+            latitudeDelta: 2,
+            longitudeDelta: 2
           }} >
             {
               reports.map((report) => <MapView.Marker
