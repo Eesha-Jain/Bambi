@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import * as Font from 'expo-font';
+import { Font, AppLoading } from "expo";
 import { Ionicons } from '@expo/vector-icons';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -11,29 +11,31 @@ const Stack = createStackNavigator();
 import FirstScreen from './screens/FirstScreen';
 import Map from './screens/Map';
 
+const fetchFonts = () => {
+  return Font.loadAsync({
+    ...Ionicons.font,
+    'ns-light': require('./assets/fonts/ns-light.otf'),
+    'ns-bold': require('./assets/fonts/ns-bold.otf'),
+    'ns-medium': require('./assets/fonts/ns-medium.otf'),
+    'ns-mediumbold': require('./assets/fonts/ns-mediumbold.otf'),
+    'ns-regular': require('./assets/fonts/ns-regular.otf'),
+  });
+};
+
 export default function App() {
   const [route, setRoute] = useState("FirstScreen");
+  const [fontLoaded, setFontLoaded] = useState(false);
 
-  useEffect(() => {
-    const makeRequest = async () => {
-      await Font.loadAsync({
-        ...Ionicons.font,
-        'hn-bold': require('./assets/fonts/Bold.otf'),
-        'hn-extrabold': require('./assets/fonts/ExtraBold.otf'),
-        'hn-hairline': require('./assets/fonts/Hairline.otf'),
-        'hn-hairlineitalic': require('./assets/fonts/HairlineItalic.otf'),
-        'hn-light': require('./assets/fonts/Light.otf'),
-        'hn-medium': require('./assets/fonts/Medium.otf'),
-        'hn-regular': require('./assets/fonts/Regular.otf'),
-        'hn-semibolditalic': require('./assets/fonts/SemiBoldItalic.otf'),
-        'hn-super': require('./assets/fonts/Super.otf'),
-        'hn-thin': require('./assets/fonts/Thin.otf'),
-        'hn-ultralight': require('./assets/fonts/UltraLight.otf'),
-      });
-    }
-
-    makeRequest();
-  }, []);
+  if (!fontLoaded) {
+    return (
+      <AppLoading
+        startAsync={fetchFonts}
+        onFinish={() => {
+          setFontLoaded(true);
+        }}
+      />
+    );
+  }
 
   return (
     <NavigationContainer independent={true}>

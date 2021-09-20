@@ -8,10 +8,10 @@ export default function FirstScreen({navigation: {navigate}}) {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/images/Logo.png')} style={styles.topImage} />
-      <Text style={{fontFamily: "hn-extrabold", fontSize: 25, color: colors.brown}}>Welcome to Bambi!</Text>
-      <Text style={{fontFamily: "hn-light", fontSize: 16, color: colors.brown, marginTop: 20, marginLeft: 20, marginRight: 20, textAlign: "center"}}>There are 1.5M deer related accidents every year, so thank you for doing your part in helping deer survive!</Text>
+      <Text style={{fontFamily: "ns-bold", fontSize: 25, color: colors.brown}}>Welcome to Bambi!</Text>
+      <Text style={{fontFamily: "ns-regular", fontSize: 16, color: colors.brown, marginTop: 20, marginLeft: 20, marginRight: 20, textAlign: "center"}}>There are 1.5M deer related accidents every year, so thank you for doing your part in helping deer survive!</Text>
 
-      <TouchableOpacity onPress={() => {navigate("Map")}} style={{marginTop: 20, backgroundColor: colors.yellow, padding: 20, paddingLeft: 40, paddingRight: 40, borderRadius: 10}}><Text style={{color: colors.brown, fontFamily: "hn-medium", fontSize: 16}}>START NOW!</Text></TouchableOpacity>
+      <TouchableOpacity onPress={() => {navigate("Map")}} style={{marginTop: 20, backgroundColor: colors.yellow, padding: 20, paddingLeft: 40, paddingRight: 40, borderRadius: 10}}><Text style={{color: colors.brown, fontFamily: "ns-medium", fontSize: 16}}>START NOW!</Text></TouchableOpacity>
     </View>
   );
 }
