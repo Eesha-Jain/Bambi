@@ -10,9 +10,24 @@ const Stack = createStackNavigator();
 
 import FirstScreen from './screens/FirstScreen';
 import Map from './screens/Map';
+import storage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const [route, setRoute] = useState("FirstScreen");
+
+  useEffect(() => {
+    const makeRequest = async () => {
+      storage.getItem('firsttime').then((item) => {
+        if (item) {
+          setRoute("Map");
+        } else {
+          setRoute("FirstScreen");
+        }
+      })
+    }
+
+    makeRequest();
+  }, []);
 
   const [loaded] = useFonts({
     'ns-light': require('./assets/fonts/ns-light.otf'),
