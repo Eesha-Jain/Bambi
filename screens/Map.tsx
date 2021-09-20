@@ -15,22 +15,19 @@ export default function Map({navigation: {navigate}}) {
       "altitude": 131.98288917541504,
       "altitudeAccuracy": 10,
       "heading": -1,
-      "latitude": 47.62433193633936,
-      "longitude": -122.12524060705351,
+      "latitude": 0,
+      "longitude": 0,
       "speed": -1,
     },
     "timestamp": 1632112627679.3599,
   });
 
+  Location.installWebGeolocationPolyfill();
+
   useEffect(() => {
     setReports(data.reports);
-    findCoordinates();
-  }, []);
-
-  function findCoordinates() {
-    Location.installWebGeolocationPolyfill();
     navigator.geolocation.getCurrentPosition(setPosition);
-	};
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -38,7 +35,7 @@ export default function Map({navigation: {navigate}}) {
 
         <MapView
           style={styles.map}
-          initialRegion={{
+          region={{
             latitude: position["coords"]["latitude"],
             longitude: position["coords"]["longitude"],
             latitudeDelta: 2,
