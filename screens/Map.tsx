@@ -6,6 +6,7 @@ import colors from '../assets/files/Colors';
 import MapView from 'react-native-maps';
 import data from '../tempmapdata.ts';
 import * as Location from 'expo-location';
+import uuid from 'react-native-uuid';
 
 export default function Map({navigation: {navigate}}) {
   let [reports, setReports] = useState([]);
@@ -23,6 +24,18 @@ export default function Map({navigation: {navigate}}) {
   });
 
   Location.installWebGeolocationPolyfill();
+
+  function addReport() {
+    navigator.geolocation.getCurrentPosition(setPosition);
+    reports.push({
+      "id": uuid.v4(),
+      "location": "DEER SIGHTING",
+      "lat": position.lat,
+      "lon": position.long,
+      "comments": (Date.now().getMinutes() - Date.now().getMinutes()) + " minutes ago",
+      "created_at": Date.now(),
+    });
+  }
 
   useEffect(() => {
     setReports(data.reports);
@@ -52,7 +65,7 @@ export default function Map({navigation: {navigate}}) {
             }
         </MapView>
 
-        <TouchableOpacity style={{marginTop: 20, backgroundColor: colors.yellow, padding: 20, width: win.width * 0.9, borderRadius: 10}}><Text style={{color: colors.brown, fontFamily: "ns-regular", fontSize: 14, textAlign: "center"}}>REPORT DEER CROSSING AT YOUR LOCATION</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => {addReport();}} style={{marginTop: 20, backgroundColor: colors.yellow, padding: 20, width: win.width * 0.9, borderRadius: 10}}><Text style={{color: colors.brown, fontFamily: "ns-regular", fontSize: 14, textAlign: "center"}}>REPORT DEER CROSSING AT YOUR LOCATION</Text></TouchableOpacity>
     </View>
   );
 }
