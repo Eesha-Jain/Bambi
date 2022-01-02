@@ -4,8 +4,8 @@ export default {
     {
       "id": 45981,
       "location": "DEER SIGHTING",
-      "lat": 47.624698338494774,
-      "lon": -122.12536601110386,
+      "latitude": 47.624698338494774,
+      "longitude": -122.12536601110386,
       "comments": "4 minutes ago",
       "created_at": "2020-03-05T14:54:06.650Z",
     },

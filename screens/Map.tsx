@@ -9,38 +9,44 @@ import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
 
 export default function Map({navigation: {navigate}}) {
-  let [reports, setReports] = useState([]);
-  let [position, setPosition] = useState({
-    "coords": {
-      "accuracy": 65,
-      "altitude": 131.98288917541504,
-      "altitudeAccuracy": 10,
-      "heading": -1,
-      "latitude": 0,
-      "longitude": 0,
-      "speed": -1,
+  const [reports, setReports] = useState([]);
+  const [position, setPosition] = useState({
+    coords: {
+      accuracy: 65,
+      altitude: 131.98288917541504,
+      altitudeAccuracy: 10,
+      heading: -1,
+      latitude: 0,
+      longitude: 0,
+      speed: -1,
     },
-    "timestamp": 1632112627679.3599,
+    timestamp: 1632112627679.3599,
   });
+  const [loading, setLoading] = useState(true);
 
   Location.installWebGeolocationPolyfill();
 
   function addReport() {
     navigator.geolocation.getCurrentPosition(setPosition);
     reports.push({
-      "id": uuid.v4(),
-      "location": "DEER SIGHTING",
-      "lat": position.lat,
-      "lon": position.long,
-      "comments": (Date.now().getMinutes() - Date.now().getMinutes()) + " minutes ago",
-      "created_at": Date.now(),
+      id: uuid.v4(),
+      location: "DEER SIGHTING",
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      comments: (new Date().getMinutes() - new Date().getMinutes()) + " minutes ago",
+      created_at: new Date(),
     });
   }
 
   useEffect(() => {
-    setReports(data.reports);
-    navigator.geolocation.getCurrentPosition(setPosition);
-  }, []);
+    const run = async () => {
+      setReports(data.reports);
+      await navigator.geolocation.getCurrentPosition(setPosition);
+      setLoading(false);
+    }
+
+    if (loading) {run();}
+  }, [loading]);
 
   return (
     <View style={styles.container}>
@@ -49,15 +55,15 @@ export default function Map({navigation: {navigate}}) {
         <MapView
           style={styles.map}
           region={{
-            latitude: position["coords"]["latitude"],
-            longitude: position["coords"]["longitude"],
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
             latitudeDelta: 2,
             longitudeDelta: 2
           }} >
             {
               reports.map((report) => <MapView.Marker
                 key={report.id}
-                coordinate={{ latitude: report.lat, longitude: report.lon }}
+                coordinate={{ latitude: report.latitude, longitude: report.longitude }}
                 title={report.location}
                 description={report.comments}
               >
@@ -65,7 +71,7 @@ export default function Map({navigation: {navigate}}) {
             }
         </MapView>
 
-        <TouchableOpacity onPress={() => {addReport();}} style={{marginTop: 20, backgroundColor: colors.yellow, padding: 20, width: win.width * 0.9, borderRadius: 10}}><Text style={{color: colors.brown, fontFamily: "ns-regular", fontSize: 14, textAlign: "center"}}>REPORT DEER CROSSING AT YOUR LOCATION</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => {addReport()}} style={{marginTop: 20, backgroundColor: colors.yellow, padding: 20, width: win.width * 0.9, borderRadius: 10}}><Text style={{color: colors.brown, fontFamily: "ns-regular", fontSize: 14, textAlign: "center"}}>REPORT DEER CROSSING AT YOUR LOCATION</Text></TouchableOpacity>
     </View>
   );
 }
