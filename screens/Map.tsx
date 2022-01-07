@@ -7,6 +7,13 @@ import MapView from 'react-native-maps';
 import data from '../tempmapdata.ts';
 import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
+import firebase, { initializeApp } from 'firebase/app';
+import config from './config.tsx';
+import "firebase/firestore";
+import { getFirestore, doc, collection, getDocs, setDoc, addDoc, get } from "firebase/firestore";
+
+const app = firebase.initializeApp(config);
+const firestore = app.firestore();
 
 export default function Map({navigation: {navigate}}) {
   const [reports, setReports] = useState([]);
@@ -26,27 +33,44 @@ export default function Map({navigation: {navigate}}) {
 
   Location.installWebGeolocationPolyfill();
 
-  function addReport() {
+  async function addReport() {
     navigator.geolocation.getCurrentPosition(setPosition);
-    reports.push({
-      id: uuid.v4(),
+    const id = uuid.v4();
+    const dic = {
+      id: id,
       location: "DEER SIGHTING",
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
-      comments: (new Date().getMinutes() - new Date().getMinutes()) + " minutes ago",
       created_at: new Date(),
-    });
+    };
+
+    await addDoc(doc(firestore, "deersighting", id), dic);
+    const report = [...reports];
+    setReports(report.push(dic));
   }
 
   useEffect(() => {
     const run = async () => {
-      setReports(data.reports);
       await navigator.geolocation.getCurrentPosition(setPosition);
+      const arr = [];
+
+      const querySnapshot = await getDocs(collection(firestore, "deersighting"));
+      querySnapshot.forEach(async (doc) => {
+        if (new Date() - doc.data().created_at > 300000) {
+          doc.ref.delete();
+        } else {
+          arr.push(doc.data());
+        }
+      });
+
+      console.log(arr);
+
+      setReports(arr);
       setLoading(false);
     }
 
     if (loading) {run();}
-  }, [loading]);
+  }, [loading, reports]);
 
   return (
     <View style={styles.container}>
@@ -62,10 +86,10 @@ export default function Map({navigation: {navigate}}) {
           }} >
             {
               reports.map((report) => <MapView.Marker
-                key={report.id}
+                key={ report.id }
                 coordinate={{ latitude: report.latitude, longitude: report.longitude }}
-                title={report.location}
-                description={report.comments}
+                title="DEER SIGHTING"
+                description={ "Created at " + (report.created_at.getHours() % 12 ? report.created_at.getHours() % 12 : 0) + ": " + report.created_at.getMinutes() }
               >
               </MapView.Marker>)
             }
