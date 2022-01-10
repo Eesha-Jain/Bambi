@@ -44,9 +44,10 @@ export default function Map({navigation: {navigate}}) {
       created_at: new Date(),
     };
 
-    await addDoc(doc(firestore, "deersighting", id), dic);
+    await firestore.collection("deersighting").doc(id).set(dic);
     const report = [...reports];
-    setReports(report.push(dic));
+    report.push(dic);
+    setReports(report);
   }
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function Map({navigation: {navigate}}) {
       await navigator.geolocation.getCurrentPosition(setPosition);
       const arr = [];
 
-      const querySnapshot = await getDocs(collection(firestore, "deersighting"));
+      const querySnapshot = await firestore.collection("deersighting").get(); //make this work and not delete values in database
       querySnapshot.forEach(async (doc) => {
         if (new Date() - doc.data().created_at > 300000) {
           doc.ref.delete();
@@ -62,8 +63,6 @@ export default function Map({navigation: {navigate}}) {
           arr.push(doc.data());
         }
       });
-
-      console.log(arr);
 
       setReports(arr);
       setLoading(false);
